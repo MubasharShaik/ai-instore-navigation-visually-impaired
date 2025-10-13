@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Item</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Existing styles */
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .left {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .navbar .right {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #03a9f4;
+        }
+
+        .project-info {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .project-info h2 {
+            margin-bottom: 20px;
+        }
+
+        .project-info p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            margin: 30px auto;
+            width: fit-content;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .grid-item:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s;
+        }
+
+        /* New styles for the button */
+        .voice-button-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .voice-button {
+            padding: 10px 20px;
+            background-color: #03a9f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .voice-button:hover {
+            background-color: #0288d1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="left">
+            Instore Navigation
+        </div>
+        <div class="right">
+            <a href="#">Home</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Select an Item</h1>
+        
+        <!-- Voice Input Button -->
+        <div class="voice-button-container">
+            <button class="voice-button" onclick="startVoiceInput()">🎤 Speak to Select</button>
+        </div>
+
+        <!-- Grid Section -->
+        <div class="grid">
+            {% for item in items %}
+            <div class="grid-item" onclick="window.location.href='{{ url_for('select_item', item_id=loop.index0) }}'">
+                <img src="{{ url_for('static', filename='images/' + item.lower() + '.jpg') }}" alt="{{ item }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Project Information -->
+        <div class="project-info">
+            <h2>About This Project</h2>
+            <p>
+                This project demonstrates a simple yet interactive way to select items from a grid layout. 
+                Each item is represented visually with an image for better engagement.
+            </p>
+            <p>
+                Navigate through the maze to collect the selected product while learning about basic pathfinding concepts.
+                The interface is designed to be both user-friendly and visually appealing.
+            </p>
+        </div>
+    </div>
+
+    <!-- Script for Speech Recognition -->
+    <script>
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.onresult = function(event) {
+                    const spokenText = event.results[0][0].transcript.toLowerCase();
+                    const items = {{ items | tojson }};
+                    
+                    const foundItem = items.find(item => spokenText.includes(item.toLowerCase()));
+                    if (foundItem) {
+                        const itemIndex = items.indexOf(foundItem);
+                        window.location.href = `/select/${itemIndex}`;
+                    } else {
+                        alert('Item not recognized. Please try again.');
+                    }
+                };
+                recognition.onerror = function() {
+                    alert('Error occurred during speech recognition. Please try again.');
+                };
+                recognition.start();
+            } else {
+                alert('Speech Recognition is not supported in your browser.');
+            }
+        }
+    </script>
+</body>
+</html>

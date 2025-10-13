@@ -1,0 +1,22 @@
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+venv/
+ENV/
+.envrc
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore archives
+*.rar
+*.zip
+*.tar.gz
