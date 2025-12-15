@@ -1,2 +1,0 @@
-open terminal 
-python app.py
